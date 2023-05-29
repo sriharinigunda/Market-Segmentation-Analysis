@@ -43,7 +43,7 @@ summary = pd.DataFrame({
 print(summary)
 summary=summary.round(1)
 
-plt.scatter(MD_pca.transform(x)[:, 0], MD_pca.transform(MD_x)[:, 1], c='grey')
+plt.scatter(MD_pca.transform(MD_x)[:, 0], MD_pca.transform(MD_x)[:, 1], c='grey')
 plt.xlabel("PC 1")
 plt.ylabel("PC 2")
 plt.show()
@@ -66,22 +66,22 @@ bootstrap_results = []
 for k in k_values:
     bootstrap_scores = []
     for _ in range(100):
-        bootstrap_sample = np.random.choice(range(MD_x.shape[0]), size=x.shape[0], replace=True)
+        bootstrap_sample = np.random.choice(range(MD_x.shape[0]), size=MD_x.shape[0], replace=True)
         bootstrap_data = MD_x[bootstrap_sample]
         kmeans = KMeans(n_clusters=k, random_state=1234)
         kmeans.fit(bootstrap_data)
         bootstrap_scores.append(kmeans.inertia_)
     bootstrap_results.append(bootstrap_scores)
 
-# Plot number of segments vs. adjusted Rand index
+# Plot number of segments vs adjusted Rand index
 plt.boxplot(bootstrap_results)
 plt.xlabel("Number of segments")
 plt.ylabel("Adjusted Rand index")
 plt.xticks(range(1, len(k_values) + 1), k_values)
 plt.show()
 
-# Assuming MD.x is the input data matrix and MD.k4 is the cluster labels
-# Assuming MD.km28 is the KMeans clustering result
+# Assuming MD_x is the input data matrix and MD.k4 is the cluster labels
+# Assuming results is the KMeans clustering result
 
 # Plot histogram of cluster membership probabilities
 plt.hist([res.labels_ for res in results], bins=10, range=(0, 1))
@@ -94,7 +94,7 @@ plt.show()
 MD_k4 = [res.labels_ for res in results]
 
 # Calculate segment stability
-# Assuming x is the input data matrix and MD_k4 is the cluster labels
+# Assuming MD_x is the input data matrix and MD_k4 is the cluster labels
 
 # Fit K-means clustering with the desired number of segments
 k = 4
@@ -118,7 +118,7 @@ plt.ylim(0, 1)
 plt.show()
 
 
-# Assuming MD.x is the input data matrix
+# Assuming MD_x is the input data matrix
 
 # Fit Gaussian mixture models for different number of components (2 to 8)
 k_values = range(2, 9)
@@ -173,11 +173,6 @@ loglik_m4 = desired_model.score(MD_x)
 print(f"Log-Likelihood (Mixture Model with Fixed Clusters): {loglik_m4a}")
 print(f"Log-Likelihood (Fitted Mixture Model): {loglik_m4}")
 
-import numpy as np
-import pandas as pd
-import statsmodels.api as sm
-import matplotlib.pyplot as plt
-
 # Assuming 'data' is a pandas DataFrame with the required columns
 
 # Reverse levels of the 'Like' variable
@@ -222,12 +217,8 @@ sm.graphics.plot_partregress_grid(MD.ref2)
 plt.show()
 
 
-
-
-
-
 # Calculate the pairwise distance matrix
-MD_x = np.transpose(MD_x)  # Transpose MD.x for distance calculation
+MD_x = np.transpose(MD_x)  # Transpose MD_x for distance calculation
 distance_matrix = pdist(MD_x)
 
 # Perform hierarchical clustering
@@ -240,8 +231,8 @@ plt.gca().set_axis_off()
 plt.show()
 
 # Perform PCA
-MD_pca = PCA(n_components=2)
-MD_x_pca = MD_pca.fit_transform(MD_x)
+MD_pca1 = PCA(n_components=2)
+MD_x_pca = MD_pca1.fit_transform(MD_x)
 
 # Perform K-means clustering
 k = 4
@@ -262,7 +253,7 @@ plt.xlabel('Principal Component 1')
 plt.ylabel('Principal Component 2')
 
 # Draw projection axes
-for length, vector in zip(MD_pca.explained_variance_, MD_pca.components_):
+for length, vector in zip(MD_pca1.explained_variance_, MD_pca1.components_):
     v = vector * 2 * np.sqrt(length)
     plt.plot([0, v[0]], [0, v[1]], '-k', lw=1)
 
